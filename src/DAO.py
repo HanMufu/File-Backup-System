@@ -25,7 +25,7 @@ class DAO:
         return
 
     def create_table(self, table_id):
-        sql = "CREATE TABLE test."+table_id+\
+        sql = "CREATE TABLE "+table_id+\
               "(ID INT PRIMARY KEY AUTO_INCREMENT, " \
               "filePath_Client VARCHAR(200), " \
               "filePath_Server VARCHAR(200), " \
@@ -48,7 +48,7 @@ class DAO:
     def request_data(self, last_version):
         try:
             # sql = "select MD5, fileName, filePath_Server from test."+last_version
-            sql = "select * from %s.%s" % (database, last_version)
+            sql = "select * from %s" % (last_version)
             cur.execute(sql)
             res = cur.fetchall()
             #print(res)
@@ -59,8 +59,8 @@ class DAO:
         return res
 
     def upload_data(self, table_id, file_path_client, file_path_server, file_size, file_type, filename, md5_code, is_exist):
-        sql = "INSERT INTO %s.%s VALUES (NULL, '%s', '%s', '%s', '%s', '%s', '%s', %s, %s)"\
-            % (database, table_id, pymysql.escape_string(str(file_path_client)), pymysql.escape_string(str(file_path_server)),
+        sql = "INSERT INTO %s VALUES (NULL, '%s', '%s', '%s', '%s', '%s', '%s', %s, %s)"\
+            % (table_id, pymysql.escape_string(str(file_path_client)), pymysql.escape_string(str(file_path_server)),
                str(file_size), file_type, pymysql.escape_string(str(filename)), md5_code, is_exist, 'False')
         cur.execute(sql)
         #print(sql)
@@ -73,7 +73,7 @@ class DAO:
         return database
 
     def update_Bp_completed(self, table_id, server_path):
-        sql = "Update %s.%s SET isBp_Complete=True WHERE filePath_Server='%s'" % (database, table_id, pymysql.escape_string(str(server_path)))
+        sql = "Update %s SET isBp_Complete=True WHERE filePath_Server='%s'" % (table_id, pymysql.escape_string(str(server_path)))
         cur.execute(sql)
         return
 
