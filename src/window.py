@@ -309,27 +309,29 @@ class signupdialog(QDialog):
         self.pushButton_signup = QPushButton()
         self.pushButton_signup.setText("Sign Up")
         self.verticalLayout.addWidget(self.pushButton_signup)
-        self.pushButton_signup.clicked.connect(self.login_show)
+        self.pushButton_signup.clicked.connect(self.enter_main_frame)
 
         self.pushButton_quit = QPushButton()
         self.pushButton_quit.setText("Cancel")
         self.verticalLayout.addWidget(self.pushButton_quit)
 
+        self.warning = QLabel()
+        self.warning.setFixedSize(400, 20)
+        self.verticalLayout.addWidget(self.warning)
+
         # self.pushButton_enter.clicked.connect(self.on_pushButton_enter_clicked)
         self.pushButton_quit.clicked.connect(QCoreApplication.instance().quit)
 
-    def login_show(self):
-        print(self.lineEdit_account.text())  # 这两行我用的是打印，但是应当是需要加入后端函数的，需要对输入的这个用户名创建文件夹
-        print(self.lineEdit_password.text())
-
-        if self.lineEdit_account.text() == "":
-            return
-        # Verify password
-        if self.lineEdit_password.text() == "":
-            return
-
-        self.close()
-        self.ui.accept()
+    def enter_main_frame(self):
+        global current_user
+        res = current_user.signup(self.lineEdit_account.text(), self.lineEdit_password.text(), self.lineEdit_path())
+        if res[0] == False:
+            self.warning.setText("Sign up failed")
+        else:
+            current_user = res[1]
+            current_user.print_all()
+            self.close()
+            self.ui.accept()
 
         # self.ui.show()
         # self.ui.exec_()
@@ -337,20 +339,11 @@ class signupdialog(QDialog):
     def setpath(self):
         # 这个path就是用户选择的path，这里要加上后端对于path处理的函数
         path = QFileDialog.getExistingDirectory(self, 'Choose Backup Directory', './')
-        global current_user
-        res = current_user.signup(self.lineEdit_account.text(), self.lineEdit_password.text(), path)
-        if res[0] == False:
-            pass
-        else:
-            current_user = res[1]
-            current_user.print_all()
-            pass
-        #这后面应该就没了
 
         # print(path)
         # print(type(path))
-        # self.lineEdit_path.setText(path)
-        # return path
+        self.lineEdit_path.setText(path)
+        return path
 
 
 app = QtWidgets.QApplication(sys.argv)
