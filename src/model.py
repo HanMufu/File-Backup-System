@@ -133,15 +133,11 @@ class User:
         sql = "select * from user_backup_history where user_id = " + str(self.user_id)
         print(sql)
         try:
-            print("1")
             cursor.execute(sql)
             results = cursor.fetchall()
-            print("1")
             backup_history_list = []
             for row in results:
-                print("2")
                 tmp_backup = Backup(row[0], row[2], row[3])
-                print("3")
                 backup_history_list.append(tmp_backup)
             print("get backup list successful, len of list is " + str(len(backup_history_list)))
         except:
@@ -188,7 +184,7 @@ class User:
                 curr_file = Item(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
                 res_file_list.append(curr_file)
                 curr_file.print_all()
-            print("fetch folder content successful, len of content is " + len(res_file_list))
+            print("fetch folder content successful, len of content is " + str(len(res_file_list)))
         except:
             print("Error: unable to fetch data")
             connection.disconnect()
