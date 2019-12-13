@@ -25,8 +25,8 @@ class DAO:
         return
 
     def create_table(self, table_id):
-        sql = "CREATE TABLE test."+table_id+\
-              "(ID INT PRIMARY KEY AUTO_INCREMENT, " \
+        sql = "CREATE TABLE " + database + "." + table_id+\
+              " (ID INT PRIMARY KEY AUTO_INCREMENT, " \
               "filePath_Client VARCHAR(200), " \
               "filePath_Server VARCHAR(200), " \
               "fileSize VARCHAR(50), " \
@@ -40,6 +40,7 @@ class DAO:
         try:
             cur.execute(sql)
         except:
+            print(sql)
             print("Couldn't create a new version")
 
         print("Create table successfully")

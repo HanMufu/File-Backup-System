@@ -2,8 +2,8 @@ import DAO
 import Scanner
 # Checking md5 doesn't reflect file name change
 if __name__ == '__main__':
-    path = "/Users/hanmufu/Downloads"
-    user = 'cqh'
+    path = "/Users/hanmufu/Downloads/RUBackup_test_folder"
+    user = 'root'
     pwd = 'CAMRYLOVESEDGE'
     ftp_user = 'root'
     ftp_pwd = 'CAMRYLOVESEDGE'
