@@ -138,6 +138,10 @@ class Ui_RU_Backup(object):
         db = current_user.user_name
         s = Scanner.Scanner(path, db, user, pwd, ftp_user, ftp_pwd, port, current_user.user_name)
         print("scan completed, return to window")
+        # 这里要刷新backup list下拉菜单 // TODO
+        global backup_list
+        backup_list = current_user.get_backup_list()
+
 
     def selection_change(self):
         global current_path
@@ -404,7 +408,6 @@ class signupdialog(QDialog):
         else:
             current_user = res[1]
             current_user.print_all()
-            # 在服务器上新建文件夹
             current_user.create_folder_on_server()
             self.close()
             self.ui.accept()

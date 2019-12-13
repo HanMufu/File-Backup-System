@@ -12,13 +12,19 @@ importlib.reload(model)
 # curr.print_all()
 
 '''注册测试'''
-a = User('', '', '', '')
-res = a.signup('tommy', 'tommy', '/Users/hanmufu/Downloads')
-print(len(res))
-bob = res[1]
-bob.print_all()
+# a = User('', '', '', '')
+# res = a.signup('tommy', 'tommy', '/Users/hanmufu/Downloads')
+# print(len(res))
+# bob = res[1]
+# bob.print_all()
 
 '''测试fetch_folder_content'''
+
+
+if __name__ == '__main__':
+    noah = User(12, 'noah', 'noah', '/Users/hanmufu/Downloads/RUBackup_test_folder')
+    noah.insert_backup_history()
+
 
 
 # user_name = "alice"

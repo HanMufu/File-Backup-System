@@ -43,6 +43,9 @@ class Backup:
         self.backup_time = backupTime
         self.backup_root_path_at_server = backupFolderName
 
+    def print_all(obj):
+        print(obj.__dict__)
+
 class User:
     user_id = None
     user_name = None
@@ -90,6 +93,7 @@ class User:
                     curr_user = User(row[0], row[1], row[2], row[3])
                     curr_user.create_user_database()
                     signup_connection.close()
+                    print("signup successful")
                     return [True, curr_user]
             except:
                 signup_connection.rollback()
@@ -112,6 +116,7 @@ class User:
                 if row[2] == password_md5:
                     curr_user = User(row[0], row[1], row[2], row[3])
                     login_connection.close()
+                    print("login successful")
                     return [True, curr_user]
                 else:
                     print('wrong password')
@@ -125,16 +130,20 @@ class User:
     def get_backup_list(self):
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
         cursor = connection.cursor()
-        user_id_for_sql = "'" + str(self.user_id) + "'"
-        sql = "select * from user_backup_history where user_id = %s" % (user_id_for_sql)
-
+        sql = "select * from user_backup_history where user_id = " + str(self.user_id)
+        print(sql)
         try:
+            print("1")
             cursor.execute(sql)
             results = cursor.fetchall()
+            print("1")
             backup_history_list = []
             for row in results:
+                print("2")
                 tmp_backup = Backup(row[0], row[2], row[3])
+                print("3")
                 backup_history_list.append(tmp_backup)
+            print("get backup list successful, len of list is " + str(len(backup_history_list)))
         except:
             print("Error: unable to fetch data")
         connection.close()
@@ -144,17 +153,20 @@ class User:
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
         cursor = connection.cursor()
         curr_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
-        backup_time_for_sql = '%s' % curr_time
-        user_id_for_sql = '%s' % self.user_id
-        backup_path = '/home/dataspace/user/' + curr_time + '/'
-        backup_path_for_sql = '%s' % backup_path
+        backup_time_for_sql = "'" + curr_time + "'"
+        user_id_for_sql = "'" + str(self.user_id) + "'"
+        backup_path = '/home/dataspace/' + self.user_name + '/' + curr_time + '/'
+        backup_path_for_sql = "'" + backup_path + "'"
         sql = "insert into user_backup_history (backup_id, user_id, backup_time, backup_root_path_at_server) values (null, %s, %s, %s)" % (user_id_for_sql, backup_time_for_sql, backup_path_for_sql)
+        print(sql)
         try:
             cursor.execute(sql)
             connection.commit()
             connection.close()
+            print("insert backup history successful")
             return True
         except:
+            print("insert backup history failed")
             connection.rollback()
             connection.close()
             return False
@@ -176,6 +188,7 @@ class User:
                 curr_file = Item(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
                 res_file_list.append(curr_file)
                 curr_file.print_all()
+            print("fetch folder content successful, len of content is " + len(res_file_list))
         except:
             print("Error: unable to fetch data")
             connection.disconnect()
@@ -217,6 +230,7 @@ class User:
                 curr_file = Item(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
                 res_file_list.append(curr_file)
                 curr_file.print_all()
+            print("get folder content successful, this is an action triggered by login or signup")
         except:
             print("Error: unable to fetch data")
             connection.close()
@@ -236,6 +250,7 @@ class User:
             # stdin, stdout, stderr = ssh.exec_command('mkdir %s' % (self.user_name))
             stdin, stdout, stderr = ssh.exec_command("cd /home/dataspace/;mkdir %s" % self.user_name)
             ssh.close()
+            print("create user dataspace successful")
         except:
             print("create folder on server failed")
 
