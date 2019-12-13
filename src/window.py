@@ -67,10 +67,9 @@ class Ui_RU_Backup(object):
         self.dir_label = QLabel(RU_Backup)
         self.dir_label.setGeometry(QtCore.QRect(60, 100, 400, 30))
 
-        self.cb = QComboBox(RU_Backup)
-        self.cb.setGeometry(QtCore.QRect(0, 50, 1200, 50))
-        self.cb.addItem('2019/12/6 17:42')
-        self.cb.addItem('2019/12/8 20:11')
+        
+        #self.cb.addItem('2019/12/6 17:42')
+        #self.cb.addItem('2019/12/8 20:11')
         # 这个函数是用来往下拉菜单添加item，每一个item应该都是一个时间戳，格式03/12/2019 17:19:03
         # 可以写一个for i in listoftimestamp: self.cb.addItem(i)
         # 然后下面还需要链接到一个clicked事件，比如clicked=Lambda:Refresh
@@ -87,6 +86,14 @@ class Ui_RU_Backup(object):
         self.listWidget.verticalScrollBar().setSingleStep(1)  # set step
         # self.listWidget.setAlternatingRowColors(True);
         # self.listWidget.setVisible(False)
+
+        self.cb = QComboBox(RU_Backup)
+        self.cb.setGeometry(QtCore.QRect(0, 50, 1200, 50))
+        global backup_list
+        for i in backup_list:
+            self.cb.addItem(i.backup_time)
+        self.cb.activated.connect(self.selection_change)
+
         self.music_list()
 
     def retranslateUi(self, RU_Backup):
@@ -130,6 +137,17 @@ class Ui_RU_Backup(object):
         db = current_user.user_name
         s = Scanner.Scanner(path, db, user, pwd, ftp_user, ftp_pwd, port)
         print("scan completed, return to window")
+
+    def selection_change(self):
+        global current_path
+        global current_backup
+        global backup_list
+        for i in backup_list:
+            if i.backup_time == self.cb.currentText():
+                curr_backup = i
+                current_path = i.backup_root_path_at_server #我不知道这个serverpath是不是string，你确认下
+        self.music_list()
+
 
 
 class ItemQWidget(QtWidgets.QWidget):
