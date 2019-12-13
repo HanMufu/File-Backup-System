@@ -1,4 +1,5 @@
 import pymysql
+import time
 
 class Item:
     ID = None
@@ -111,6 +112,44 @@ class User:
         login_connection.close()
         return [False, None]
 
+    def get_backup_list(self):
+        connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
+        cursor = connection.cursor()
+        user_id_for_sql = "'" + self.userID + "'"
+        sql = "select * from user_backup_history where user_id = " % user_id_for_sql
+
+        try:
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            backup_history_list = []
+            for row in results:
+                tmp_backup = Backup(row[0], row[2], row[3])
+                backup_history_list.append(tmp_backup)
+        except:
+            print("Error: unable to fetch data")
+        connection.close()
+        return backup_history_list
+
+    def insert_backup_history(self):
+        connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
+        cursor = connection.cursor()
+        curr_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
+        backup_time_for_sql = '%s' % curr_time
+        user_id_for_sql = '%s' % self.userID
+        backup_path = '/home/dataspace/user/' + curr_time + '/'
+        backup_path_for_sql = '%s' % backup_path
+        sql = "insert into user_backup_history (backup_id, user_id, backup_time, backup_root_path_at_server) values (null, %s, %s, %s)" % (user_id_for_sql, backup_time_for_sql, backup_path_for_sql)
+        try:
+            cursor.execute(sql)
+            connection.commit()
+            connection.close()
+            return True
+        except:
+            connection.rollback()
+            connection.close()
+            return False
+
+
     def print_all(obj):
         print(obj.__dict__)
 
@@ -118,16 +157,14 @@ class User:
 
 
 class Backup:
-    backupID = None
-    backupTime = None
-    backupFolderName = None
-    backupDBTableName = None
+    backup_id = None
+    backup_time = None
+    backup_root_path_at_server = None
 
-    def __init__(self, backupID, backupTime, backupFolderName, backupDBTableName):
-        self.backupID = backupID
-        self.backupTime = backupTime
-        self.backupFolderName = backupFolderName
-        self.backupDBTableName = backupDBTableName
+    def __init__(self, backupID, backupTime, backupFolderName):
+        self.backup_id = backupID
+        self.backup_time = backupTime
+        self.backup_root_path_at_server = backupFolderName
 
 
 class DatabaseController:

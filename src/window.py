@@ -28,7 +28,8 @@ current_backup = ""
 current_folder_item = Item('', '', '', '', '', '', '', '', '')
 current_path = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
 # current_path = current_folder_item.filePath_Client
-file_list = getlist(current_path)  # 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
+# 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
+file_list = getlist(current_path)
 # file_list = fetchFolderInfo.fetch_folder_content(parent_folder, curr_backup)
 
 
@@ -243,7 +244,7 @@ class logindialog(QDialog):  # This is the class for the login dialog
         self.signup_dialog.show()
         self.signup_dialog.exec_()
 
-    # login
+    # login control
     def on_pushButton_enter_clicked(self):
         global current_user
         res = current_user.login(self.lineEdit_account.text(), self.lineEdit_password.text())
@@ -252,6 +253,9 @@ class logindialog(QDialog):  # This is the class for the login dialog
         else:
             current_user = res[1]
             current_user.print_all()
+            global current_path
+            current_path = current_user.useRootPathAtServer
+
             self.accept()
         return
 
