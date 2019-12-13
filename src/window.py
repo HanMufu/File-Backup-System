@@ -25,7 +25,7 @@ def getlist(dir):
     return os.listdir(dir)
 
 current_user: User = User('', '', '', '')
-current_backup: Backup = ""
+current_backup: Backup = ('', '', '')
 current_folder: Item = Item('', '', '', '', '', '', '', '', '')
 current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
 # current_path = current_folder_item.filePath_Client
