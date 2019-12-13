@@ -43,9 +43,9 @@ class Scanner:
         ftp = FTP.FTP(ftp_user, ftp_pwd, port)
 
         # Create new folder for this version
-        # version_path = '/home/dataspace/%s/%s/' % (ftp_user, table_id)
+        version_path = '/home/dataspace/%s/%s/' % (ftp_user, table_id)
         # Test
-        version_path = '/home/dataspace/user/%s/' % table_id
+        # version_path = '/home/dataspace/user/%s/' % table_id
         ftp.create_new_folder(version_path)
         # Don't care the warning on last_version, that's bullshit
         # Whether is the first time

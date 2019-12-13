@@ -125,7 +125,7 @@ class Ui_RU_Backup(object):
 
     def backup_start(self):
         #这里加入后端的开始备份的代码
-
+        current_user.insert_into_user_backup_history()
         path = current_user.user_root_path_at_client
         #path = "/Users/hanmufu/Downloads/RUBackup_test_folder"
         user = 'root'
@@ -384,6 +384,8 @@ class signupdialog(QDialog):
         else:
             current_user = res[1]
             current_user.print_all()
+            # 在服务器上新建文件夹
+
             self.close()
             self.ui.accept()
 
