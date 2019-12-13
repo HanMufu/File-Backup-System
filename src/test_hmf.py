@@ -18,6 +18,8 @@ print(len(res))
 bob = res[1]
 bob.print_all()
 
+'''测试fetch_folder_content'''
+
 
 # user_name = "alice"
 # password_md5 = "alice"

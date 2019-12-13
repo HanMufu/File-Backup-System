@@ -31,6 +31,7 @@ current_path = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需要�
 # 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
 file_list = getlist(current_path)
 # file_list = fetchFolderInfo.fetch_folder_content(parent_folder, curr_backup)
+backup_list = []
 
 
 # 这个list里面应该是每一个item都是一个我们定义的文件或文件夹实例
@@ -255,7 +256,14 @@ class logindialog(QDialog):  # This is the class for the login dialog
             current_user.print_all()
             global current_path
             current_path = current_user.useRootPathAtServer
-
+            global backup_list
+            backup_list = current_user.get_backup_list()
+            global current_backup
+            if len(backup_list) > 0:
+                current_backup = backup_list[0]
+            else:
+                current_backup = Backup('', '', '/Users/Desktop')
+            file_list = curr
             self.accept()
         return
 

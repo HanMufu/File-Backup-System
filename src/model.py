@@ -3,26 +3,26 @@ import time
 
 class Item:
     ID = None
-    filePath_Client = None
-    filePath_Server = None
-    fileSize = None
-    fileType = None
-    fileName = None
+    file_path_at_client = None
+    file_path_at_server = None
+    file_size = None
+    file_type = None
+    file_name = None
     MD5 = None
-    isExist_LastB = None
-    isBp_Complete = None
+    is_existed_at_last_backup = None
+    is_backup_completed = None
 
     def __init__(self, ID, filePath_Client, filePath_Server, fileSize, fileType, fileName, MD5, isExist_LastB,
                  isBp_Complete):
         self.ID = ID
-        self.filePath_Client = filePath_Client
-        self.filePath_Server = filePath_Server
-        self.fileSize = fileSize
-        self.fileType = fileType
-        self.fileName = fileName
+        self.file_path_at_client = filePath_Client
+        self.file_path_at_server = filePath_Server
+        self.file_size = fileSize
+        self.file_type = fileType
+        self.file_name = fileName
         self.MD5 = MD5
-        self.isExist_LastB = isExist_LastB
-        self.isBp_Complete = isBp_Complete
+        self.is_existed_at_last_backup = isExist_LastB
+        self.is_backup_completed = isBp_Complete
 
     def print_all(obj):
         print(obj.__dict__)
@@ -32,23 +32,32 @@ class Item:
 # folderA = Item("002", "/desktop", "/20191204220814/desktop/folderA", "25374", "folder", "folderA", "mnbvcxzlkjhgfdsa", False, True)
 # folderA.print()
 
+class Backup:
+    backup_id = None
+    backup_time = None
+    backup_root_path_at_server = None
+
+    def __init__(self, backupID, backupTime, backupFolderName):
+        self.backup_id = backupID
+        self.backup_time = backupTime
+        self.backup_root_path_at_server = backupFolderName
 
 class User:
-    userID = None
-    userName = None
-    passwordMD5 = None
-    useRootPathAtServer = None
+    user_id = None
+    user_name = None
+    password_md5 = None
+    user_root_path_at_server = None
 
     def __init__(self, userID, userName, passwordMD5, useRootPathAtServer):
-        self.userID = userID
-        self.userName = userName
-        self.passwordMD5 = passwordMD5
-        self.useRootPathAtServer = useRootPathAtServer
+        self.user_id = userID
+        self.user_name = userName
+        self.password_md5 = passwordMD5
+        self.user_root_path_at_server = useRootPathAtServer
 
     def create_user_database(self):
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', port=3306)
         cursor = connection.cursor()
-        sql3 = "create database %s" % self.userName
+        sql3 = "create database %s" % self.user_name
         cursor.execute(sql3)
         connection.close()
 
@@ -115,7 +124,7 @@ class User:
     def get_backup_list(self):
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
         cursor = connection.cursor()
-        user_id_for_sql = "'" + self.userID + "'"
+        user_id_for_sql = "'" + self.user_id + "'"
         sql = "select * from user_backup_history where user_id = " % user_id_for_sql
 
         try:
@@ -135,7 +144,7 @@ class User:
         cursor = connection.cursor()
         curr_time = time.strftime("%Y%m%d%H%M%S", time.localtime())
         backup_time_for_sql = '%s' % curr_time
-        user_id_for_sql = '%s' % self.userID
+        user_id_for_sql = '%s' % self.user_id
         backup_path = '/home/dataspace/user/' + curr_time + '/'
         backup_path_for_sql = '%s' % backup_path
         sql = "insert into user_backup_history (backup_id, user_id, backup_time, backup_root_path_at_server) values (null, %s, %s, %s)" % (user_id_for_sql, backup_time_for_sql, backup_path_for_sql)
@@ -149,6 +158,28 @@ class User:
             connection.close()
             return False
 
+    def fetch_folder_content(self, parent_folder: Item, curr_backup: Backup):
+        # connect to DB
+        connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db=self.user_name, port=3306)
+        cursor = connection.cursor()
+        # select * from curr_backup.backupDBTableName where filePath_Client = parent_folder.filePath_Client + parent_folder.fileName
+        parent_folder_path = "'" + parent_folder.file_path_at_client + parent_folder.file_name + "/'"
+        backup_table_name_for_sql = "'" + curr_backup.backup_time + "'"
+        sql = "select * from %s where filePath_Client = %s" % (backup_table_name_for_sql, parent_folder_path)
+        res_file_list = []
+        try:
+            cursor.execute(sql)
+            # 获取所有记录列表
+            results = cursor.fetchall()
+            for row in results:
+                curr_file = Item(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+                res_file_list.append(curr_file)
+                curr_file.print_all()
+        except:
+            print("Error: unable to fetch data")
+            connection.disconnect()
+        return res_file_list
+
 
     def print_all(obj):
         print(obj.__dict__)
@@ -156,34 +187,24 @@ class User:
 # curr_user = User("Alice_qwertyu", "Alice", "aldskfj23lkhagd", "/home/dataspace/Alice_qwertyu", "Alice_qwertyu")
 
 
-class Backup:
-    backup_id = None
-    backup_time = None
-    backup_root_path_at_server = None
 
-    def __init__(self, backupID, backupTime, backupFolderName):
-        self.backup_id = backupID
-        self.backup_time = backupTime
-        self.backup_root_path_at_server = backupFolderName
-
-
-class DatabaseController:
-    def __init__(self):
-        pass
-
-    def connect_database(self):
-        try:
-            global connection
-            '''有问题 db指定的不对'''
-            connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE',
-                                         db=curr_user.userName, port=3306)
-            cursor = connection.cursor()
-        except:
-            print("Fail to connect database")
-        return cursor
-
-    def disconnect_database(self):
-        connection.close()
+# class DatabaseController:
+#     def __init__(self):
+#         pass
+#
+#     def connect_database(self):
+#         try:
+#             global connection
+#             '''有问题 db指定的不对'''
+#             connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE',
+#                                          db=curr_user.userName, port=3306)
+#             cursor = connection.cursor()
+#         except:
+#             print("Fail to connect database")
+#         return cursor
+#
+#     def disconnect_database(self):
+#         connection.close()
 
 
 
