@@ -32,7 +32,7 @@ current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需
 # 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
 file_item_list = []
 file_list = getlist(current_path)
-# file_list = fetchFolderInfo.fetch_folder_content(parent_folder, curr_backup)
+# file_list = current_user.fetch_folder_content(parent_folder, curr_backup)
 backup_list = []
 
 
@@ -405,10 +405,9 @@ class signupdialog(QDialog):
             current_user = res[1]
             current_user.print_all()
             # 在服务器上新建文件夹
-
+            current_user.create_folder_on_server()
             self.close()
             self.ui.accept()
-
         # self.ui.show()
         # self.ui.exec_()
 

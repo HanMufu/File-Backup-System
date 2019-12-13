@@ -1,5 +1,6 @@
 import pymysql
 import time
+import paramiko
 
 class Item:
     ID = None
@@ -220,6 +221,20 @@ class User:
             print("Error: unable to fetch data")
             connection.close()
         return res_file_list
+
+    def create_folder_on_server(self):
+        host_name = "35.223.248.16"
+        user_name = 'root'
+        password = 'CAMRYLOVESEDGE'
+        port = 22
+        '''connect to remote server'''
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(hostname=host_name, port=port, username=user_name, password=password)
+        stdin, stdout, stderr = ssh.exec_command("cd /home/dataspace/")
+        stdin, stdout, stderr = ssh.exec_command('mkdir %s' % (self.user_name))
+        ssh.close()
+
 
     def print_all(obj):
         print(obj.__dict__)
