@@ -324,7 +324,7 @@ class signupdialog(QDialog):
 
     def enter_main_frame(self):
         global current_user
-        res = current_user.signup(self.lineEdit_account.text(), self.lineEdit_password.text(), self.lineEdit_path())
+        res = current_user.signup(self.lineEdit_account.text(), self.lineEdit_password.text(), self.lineEdit_path.text())
         if res[0] == False:
             self.warning.setText("Sign up failed")
         else:
