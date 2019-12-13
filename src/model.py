@@ -215,8 +215,7 @@ class User:
         cursor = connection.cursor()
         # select * from curr_backup.backupDBTableName where filePath_Client = parent_folder.filePath_Client + parent_folder.fileName
         parent_folder_path = "'" + file_path + "'"
-        backup_table_name_for_sql = "'" + curr_backup.backup_time + "'"
-        sql = "select * from %s where filePath_Client = %s" % (backup_table_name_for_sql, parent_folder_path)
+        sql = "select * from %s.%s where filePath_Client = %s" % (self.user_name, curr_backup.backup_time, parent_folder_path)
         res_file_list = []
         print(sql)
         try:

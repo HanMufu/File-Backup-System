@@ -186,7 +186,7 @@ class ItemQWidget(QtWidgets.QWidget):
         self.setLayout(self.allQHBoxLayout)
 
     def setName(self):
-        self.name.setText(self.file_class.fileName)
+        self.name.setText(self.file_class.file_name)
 
     def mouseDoubleClickEvent(self, e):  # 双击事件，如果这个item是文件夹且被双击了，
         # 那么就进入这个文件夹里面，重新刷新一下路径表，这里使用的是os.path，但是我们应该要换成写出来的自己的path
