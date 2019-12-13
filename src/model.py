@@ -131,7 +131,6 @@ class User:
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
         cursor = connection.cursor()
         sql = "select * from user_backup_history where user_id = " + str(self.user_id)
-        print(sql)
         try:
             cursor.execute(sql)
             results = cursor.fetchall()
