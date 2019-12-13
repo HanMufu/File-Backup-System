@@ -32,7 +32,6 @@ current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需
 # 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
 file_item_list = []
 file_list = getlist(current_path)
-# file_list = current_user.fetch_folder_content(parent_folder, curr_backup)
 backup_list = []
 
 
@@ -125,8 +124,8 @@ class Ui_RU_Backup(object):
         # 这个地方可以考虑用来作为用户更改备份文件夹路径的方法
 
     def backup_start(self):
-        # record this backup in DB
-        current_user.insert_backup_history()
+        #这里加入后端的开始备份的代码
+
         path = current_user.user_root_path_at_client
         #path = "/Users/hanmufu/Downloads/RUBackup_test_folder"
         user = 'root'
@@ -136,7 +135,7 @@ class Ui_RU_Backup(object):
         port = 22
         # db = 'tommy'
         db = current_user.user_name
-        s = Scanner.Scanner(path, db, user, pwd, ftp_user, ftp_pwd, port, current_user.user_name)
+        s = Scanner.Scanner(path, db, user, pwd, ftp_user, ftp_pwd, port)
         print("scan completed, return to window")
 
     def selection_change(self):
@@ -145,7 +144,7 @@ class Ui_RU_Backup(object):
         global backup_list
         for i in backup_list:
             if i.backup_time == self.cb.currentText():
-                curr_backup = i
+                current_backup = i
                 current_path = i.backup_root_path_at_server #我不知道这个serverpath是不是string，你确认下
         self.music_list()
 
@@ -170,7 +169,7 @@ class ItemQWidget(QtWidgets.QWidget):
             self.type_label.setIcon(QIcon("./file.png"))
         self.play_btn = QtWidgets.QToolButton()
         self.play_btn.setIcon(QIcon("./download.png"))  # 这里需要一个def download方法，点击之后下载这个文件到本地
-        # self.play_btn.clicked.connect(download)
+        self.play_btn.clicked.connect(self.download)
         self.info_btn = QtWidgets.QToolButton()  # 这里是显示文件信息的button，然后这个点击一下之后需要显示出来一个新窗口，在底下InfoQWidget
         self.info_btn.clicked.connect(self.info_pre.show)
         self.info_btn.setIcon(QIcon("./info.png"))
@@ -183,18 +182,28 @@ class ItemQWidget(QtWidgets.QWidget):
         self.setLayout(self.allQHBoxLayout)
 
     def setName(self):
-        self.name.setText(self.file_class.file_name)
+        self.name.setText(self.file_class.fileName)
 
     def mouseDoubleClickEvent(self, e):  # 双击事件，如果这个item是文件夹且被双击了，
         # 那么就进入这个文件夹里面，重新刷新一下路径表，这里使用的是os.path，但是我们应该要换成写出来的自己的path
         global current_path
         global file_list
+        global file_item_list
+        global current_backup
+        global current_backup
         # print("clicked"+self.name.text())
         current_path = current_path + self.name.text() + "/"
         self.ui.dir_label.setText(current_path)
-        if (os.path.isdir(current_path)):
+        
+        if self.file_class.file_type == "folder":
+            file_item_list = current_user.fetch_folder_content(self.file_class, current_backup)
             file_list = getlist(current_path)
             self.ui.music_list()  # 刷新路经表
+
+    def download(self):
+        print("download")
+        #download(self.file_class)
+        #这个位置插入吴越的download方法，self.file_class是一个文件类的对象，可以作为参数传入
 
 
 class Event():
@@ -324,7 +333,7 @@ class logindialog(QDialog):  # This is the class for the login dialog
             else:
                 print('no available backup')
                 current_backup = Backup('', '', '/Users/Desktop')
-            global file_list
+            global file_item_list
             file_item_list = current_user.fetch_root_folder_content(current_backup, current_path)
             self.accept()
         return
@@ -404,10 +413,9 @@ class signupdialog(QDialog):
         else:
             current_user = res[1]
             current_user.print_all()
-            # 在服务器上新建文件夹
-            current_user.create_folder_on_server()
             self.close()
             self.ui.accept()
+
         # self.ui.show()
         # self.ui.exec_()
 
