@@ -12,6 +12,8 @@ from PyQt5.QtGui import *
 import qdarkstyle
 import model
 from model import User, Item, Backup
+import DAO
+import Scanner
 
 # 这三条是windows的一个配置信息，我觉得在mac跑可能不一定需要这三行
 # dirname = os.path.dirname(PySide2.__file__)
@@ -116,7 +118,18 @@ class Ui_RU_Backup(object):
 
     def backup_start(self):
         #这里加入后端的开始备份的代码
-        print("a")
+
+        path = current_user.user_root_path_at_client
+        #path = "/Users/hanmufu/Downloads/RUBackup_test_folder"
+        user = 'root'
+        pwd = 'CAMRYLOVESEDGE'
+        ftp_user = 'root'
+        ftp_pwd = 'CAMRYLOVESEDGE'
+        port = 22
+        # db = 'tommy'
+        db = current_user.user_name
+        s = Scanner.Scanner(path, db, user, pwd, ftp_user, ftp_pwd, port)
+        print("scan completed, return to window")
 
 
 class ItemQWidget(QtWidgets.QWidget):
