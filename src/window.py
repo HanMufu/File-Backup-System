@@ -125,7 +125,7 @@ class Ui_RU_Backup(object):
 
     def backup_start(self):
         #这里加入后端的开始备份的代码
-
+        current_user.insert_backup_history()
         path = current_user.user_root_path_at_client
         #path = "/Users/hanmufu/Downloads/RUBackup_test_folder"
         user = 'root'
@@ -135,7 +135,7 @@ class Ui_RU_Backup(object):
         port = 22
         # db = 'tommy'
         db = current_user.user_name
-        s = Scanner.Scanner(path, db, user, pwd, ftp_user, ftp_pwd, port)
+        s = Scanner.Scanner(path, db, user, pwd, ftp_user, ftp_pwd, port, current_user.user_name)
         print("scan completed, return to window")
         # 这里要刷新backup list下拉菜单 // TODO
         global backup_list

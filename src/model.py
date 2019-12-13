@@ -186,7 +186,7 @@ class User:
                 curr_file.print_all()
             print("fetch folder content successful, len of content is " + str(len(res_file_list)))
         except:
-            print("Error: unable to fetch data")
+            print("Error: unable to fetch data in fetch_folder_content")
             connection.disconnect()
         return res_file_list
 
@@ -218,6 +218,7 @@ class User:
         backup_table_name_for_sql = "'" + curr_backup.backup_time + "'"
         sql = "select * from %s where filePath_Client = %s" % (backup_table_name_for_sql, parent_folder_path)
         res_file_list = []
+        print(sql)
         try:
             cursor.execute(sql)
             # 获取所有记录列表
@@ -228,7 +229,7 @@ class User:
                 curr_file.print_all()
             print("get folder content successful, this is an action triggered by login or signup")
         except:
-            print("Error: unable to fetch data")
+            print("Error: unable to fetch data in fetch_root_folder_content")
             connection.close()
         return res_file_list
 
