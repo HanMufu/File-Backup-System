@@ -228,12 +228,16 @@ class User:
         password = 'CAMRYLOVESEDGE'
         port = 22
         '''connect to remote server'''
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(hostname=host_name, port=port, username=user_name, password=password)
-        stdin, stdout, stderr = ssh.exec_command("cd /home/dataspace/")
-        stdin, stdout, stderr = ssh.exec_command('mkdir %s' % (self.user_name))
-        ssh.close()
+        try:
+            ssh = paramiko.SSHClient()
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(hostname=host_name, port=port, username=user_name, password=password)
+            # stdin, stdout, stderr = ssh.exec_command("cd /home/dataspace/")
+            # stdin, stdout, stderr = ssh.exec_command('mkdir %s' % (self.user_name))
+            stdin, stdout, stderr = ssh.exec_command("cd /home/dataspace/;mkdir %s" % self.user_name)
+            ssh.close()
+        except:
+            print("create folder on server failed")
 
 
     def print_all(obj):

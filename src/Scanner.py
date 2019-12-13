@@ -7,7 +7,7 @@ import FTP
 # Files are uploaded again even they are already on server
 class Scanner:
 
-    def __init__(self, path, db, user, pwd, ftp_user, ftp_pwd, port):
+    def __init__(self, path, db, user, pwd, ftp_user, ftp_pwd, port, user_dataspace_name):
         global table_id
         # Create a table id, which is also version_id
         # If not convert table_id into string, it's gonna export error
@@ -43,7 +43,7 @@ class Scanner:
         ftp = FTP.FTP(ftp_user, ftp_pwd, port)
 
         # Create new folder for this version
-        version_path = '/home/dataspace/%s/%s/' % (ftp_user, table_id)
+        version_path = '/home/dataspace/%s/%s/' % (user_dataspace_name, table_id)
         # Test
         # version_path = '/home/dataspace/user/%s/' % table_id
         ftp.create_new_folder(version_path)
