@@ -46,13 +46,13 @@ class User:
     user_id = None
     user_name = None
     password_md5 = None
-    user_root_path_at_server = None
+    user_root_path_at_client = None
 
-    def __init__(self, userID, userName, passwordMD5, useRootPathAtServer):
+    def __init__(self, userID, userName, passwordMD5, useRootPathAtClient):
         self.user_id = userID
         self.user_name = userName
         self.password_md5 = passwordMD5
-        self.user_root_path_at_server = useRootPathAtServer
+        self.user_root_path_at_client = useRootPathAtClient
 
     def create_user_database(self):
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', port=3306)
@@ -124,8 +124,8 @@ class User:
     def get_backup_list(self):
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
         cursor = connection.cursor()
-        user_id_for_sql = "'" + self.user_id + "'"
-        sql = "select * from user_backup_history where user_id = " % user_id_for_sql
+        user_id_for_sql = "'" + str(self.user_id) + "'"
+        sql = "select * from user_backup_history where user_id = %s" % (user_id_for_sql)
 
         try:
             cursor.execute(sql)
@@ -180,6 +180,46 @@ class User:
             connection.disconnect()
         return res_file_list
 
+    # def get_folder_info(self, folder_path: str, curr_backup: Backup):
+    #     connection = pymysql.connect(host='35.223.248.16', user='root', db=self.user_name, passwd='CAMRYLOVESEDGE', port=3306)
+    #     cursor = connection.cursor()
+    #     backup_table_name_for_sql = "'" + curr_backup.backup_time + "'"
+    #     folder_path_for_sql = "'" + folder_path + "'"
+    #     sql = "select * from %s where filePath_Client = %s" % (backup_table_name_for_sql, folder_path_for_sql)
+    #     try:
+    #         cursor.execute(sql)
+    #         # 获取所有记录列表
+    #         results = cursor.fetchall()
+    #         for row in results:
+    #             curr_file = Item(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+    #             res_file_list.append(curr_file)
+    #             curr_file.print_all()
+    #     except:
+    #         print("Error: unable to fetch data")
+    #         connection.disconnect()
+    #     connection.close()
+
+    def fetch_root_folder_content(self, curr_backup: Backup, file_path: str):
+        # connect to DB
+        connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db=self.user_name, port=3306)
+        cursor = connection.cursor()
+        # select * from curr_backup.backupDBTableName where filePath_Client = parent_folder.filePath_Client + parent_folder.fileName
+        parent_folder_path = "'" + file_path + "'"
+        backup_table_name_for_sql = "'" + curr_backup.backup_time + "'"
+        sql = "select * from %s where filePath_Client = %s" % (backup_table_name_for_sql, parent_folder_path)
+        res_file_list = []
+        try:
+            cursor.execute(sql)
+            # 获取所有记录列表
+            results = cursor.fetchall()
+            for row in results:
+                curr_file = Item(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8])
+                res_file_list.append(curr_file)
+                curr_file.print_all()
+        except:
+            print("Error: unable to fetch data")
+            connection.close()
+        return res_file_list
 
     def print_all(obj):
         print(obj.__dict__)

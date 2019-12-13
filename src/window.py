@@ -12,7 +12,6 @@ from PyQt5.QtGui import *
 import qdarkstyle
 import model
 from model import User, Item, Backup
-import fetchFolderInfo
 
 # 这三条是windows的一个配置信息，我觉得在mac跑可能不一定需要这三行
 # dirname = os.path.dirname(PySide2.__file__)
@@ -23,10 +22,10 @@ import fetchFolderInfo
 def getlist(dir):
     return os.listdir(dir)
 
-current_user = User('', '', '', '')
-current_backup = ""
-current_folder_item = Item('', '', '', '', '', '', '', '', '')
-current_path = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
+current_user: User = User('', '', '', '')
+current_backup: Backup = ""
+current_folder: Item = Item('', '', '', '', '', '', '', '', '')
+current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
 # current_path = current_folder_item.filePath_Client
 # 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
 file_list = getlist(current_path)
@@ -255,15 +254,19 @@ class logindialog(QDialog):  # This is the class for the login dialog
             current_user = res[1]
             current_user.print_all()
             global current_path
-            current_path = current_user.useRootPathAtServer
+            current_path = current_user.user_root_path_at_client
+            print(current_path)
             global backup_list
             backup_list = current_user.get_backup_list()
             global current_backup
             if len(backup_list) > 0:
                 current_backup = backup_list[0]
+                current_backup.print_all()
             else:
+                print('no available backup')
                 current_backup = Backup('', '', '/Users/Desktop')
-            file_list = curr
+            global file_list
+            file_list = current_user.fetch_root_folder_content(current_backup, current_path)
             self.accept()
         return
 

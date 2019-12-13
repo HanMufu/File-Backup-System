@@ -1,4 +1,4 @@
-from model import Item, User, Backup, DatabaseController
+from model import Item, User, Backup
 
 global curr_user
 curr_user = User("1", "Alice", "aldskfj23lkhagd", "/home/dataspace/Alice_qwertyu")
