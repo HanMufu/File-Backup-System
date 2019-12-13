@@ -30,6 +30,7 @@ current_folder: Item = Item('', '', '', '', '', '', '', '', '')
 current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
 # current_path = current_folder_item.filePath_Client
 # 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
+file_item_list = []
 file_list = getlist(current_path)
 # file_list = fetchFolderInfo.fetch_folder_content(parent_folder, curr_backup)
 backup_list = []
@@ -105,7 +106,7 @@ class Ui_RU_Backup(object):
     def music_list(self):
         self.listWidget.clear()  # clear list
         # print(len(file_list))
-        for n in range(0, len(file_list)):  # 这个地方就是对于file_list中的每个实例，创建一个小的Item，然后再Item中显示文件或文件夹名
+        for n in range(0, len(file_item_list)):  # 这个地方就是对于file_list中的每个实例，创建一个小的Item，然后再Item中显示文件或文件夹名
             # Create QCustomQWidget
             myItemQWidget = ItemQWidget(n, self)
             myItemQWidget.setName()
@@ -154,14 +155,16 @@ class ItemQWidget(QtWidgets.QWidget):
     def __init__(self, n, ui, parent=None):
         super(ItemQWidget, self).__init__(parent)
         global current_path
+        global file_item_list
         self.n = n
+        self.file_class = file_item_list[self.n]
         self.ui = ui
-        self.info_pre = infodialog()
+        self.info_pre = infodialog(self.file_class)
         self.textQHBoxLayout = QtWidgets.QHBoxLayout()
         self.name = QtWidgets.QLabel()  # 文件或文件夹名
-        self.file_path = current_path + file_list[self.n]
+        #self.file_path = current_path + file_list[self.n]
         self.type_label = QToolButton()
-        if os.path.isdir(self.file_path):
+        if self.file_class.file_type == "folder":
             self.type_label.setIcon(QIcon("./dir.png"))
         else:
             self.type_label.setIcon(QIcon("./file.png"))
@@ -180,7 +183,7 @@ class ItemQWidget(QtWidgets.QWidget):
         self.setLayout(self.allQHBoxLayout)
 
     def setName(self):
-        self.name.setText(file_list[self.n])
+        self.name.setText(self.file_class.file_name)
 
     def mouseDoubleClickEvent(self, e):  # 双击事件，如果这个item是文件夹且被双击了，
         # 那么就进入这个文件夹里面，重新刷新一下路径表，这里使用的是os.path，但是我们应该要换成写出来的自己的path
@@ -208,9 +211,10 @@ class Event():
 
 
 class infodialog(QDialog):  # 这个dialog是用来新打开一个窗口显示文件的各种信息的
-    def __init__(self, *args, **kwargs):  # 这里需要传入一个自己定义的file_list里面的实例file_info
+    def __init__(self, file_class, *args, **kwargs):  # 这里需要传入一个自己定义的file_list里面的实例file_info
         super().__init__(*args, **kwargs)
         self.setWindowTitle('info')
+        self.file_class = file_class
         # self.resize(600,300)
         # self.setFixedSize(self.width(), self.height())
         self.setWindowFlags(Qt.WindowCloseButtonHint)
@@ -219,11 +223,27 @@ class infodialog(QDialog):  # 这个dialog是用来新打开一个窗口显示�
         self.file_size.setText("File Size")
 
         self.file_size_pre = QLabel(self)
-        self.file_size_pre.setText("33 MB")
+        self.file_size_pre.setText(self.file_class.file_size)
+
+        self.file_type = QLabel(self)
+        self.file_type.setText("File Type")
+
+        self.file_type_pre = QLabel(self)
+        self.file_type_pre.setText(self.file_class.file_type)
+
+        self.file_MD5 = QLabel(self)
+        self.file_MD5.setText("MD5")
+
+        self.file_MD5_pre = QLabel(self)
+        self.file_MD5_pre.setText(self.file_class.MD5)
 
         self.main_layout = QGridLayout(self)
         self.main_layout.addWidget(self.file_size)
         self.main_layout.addWidget(self.file_size_pre)
+        self.main_layout.addWidget(self.file_type)
+        self.main_layout.addWidget(self.file_type_pre)
+        self.main_layout.addWidget(self.file_MD5)
+        self.main_layout.addWidget(self.file_MD5_pre)
 
 
 class logindialog(QDialog):  # This is the class for the login dialog
@@ -305,7 +325,7 @@ class logindialog(QDialog):  # This is the class for the login dialog
                 print('no available backup')
                 current_backup = Backup('', '', '/Users/Desktop')
             global file_list
-            file_list = current_user.fetch_root_folder_content(current_backup, current_path)
+            file_item_list = current_user.fetch_root_folder_content(current_backup, current_path)
             self.accept()
         return
 
