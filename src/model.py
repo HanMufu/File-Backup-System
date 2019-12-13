@@ -44,6 +44,14 @@ class User:
         self.passwordMD5 = passwordMD5
         self.useRootPathAtServer = useRootPathAtServer
 
+    def create_user_database(self):
+        connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', port=3306)
+        cursor = connection.cursor()
+        sql3 = "create database %s" % self.userName
+        cursor.execute(sql3)
+        connection.close()
+
+
     def signup(self, user_name, password_md5, rootpath):
         try:
             signup_connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
@@ -69,6 +77,7 @@ class User:
                 results = cursor.fetchall()
                 for row in results:
                     curr_user = User(row[0], row[1], row[2], row[3])
+                    curr_user.create_user_database()
                     signup_connection.close()
                     return [True, curr_user]
             except:

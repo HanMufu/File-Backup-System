@@ -13,7 +13,7 @@ importlib.reload(model)
 
 '''注册测试'''
 a = User('', '', '', '')
-res = a.signup('david', 'david', '/Users/hanmufu/Downloads')
+res = a.signup('tommy', 'tommy', '/Users/hanmufu/Downloads')
 print(len(res))
 bob = res[1]
 bob.print_all()

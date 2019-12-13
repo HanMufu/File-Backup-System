@@ -10,6 +10,9 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 # from PyQt5.QtWebEngineWidgets import *
 import qdarkstyle
+import model
+from model import User, Item, Backup
+import fetchFolderInfo
 
 # 这三条是windows的一个配置信息，我觉得在mac跑可能不一定需要这三行
 # dirname = os.path.dirname(PySide2.__file__)
@@ -20,9 +23,13 @@ import qdarkstyle
 def getlist(dir):
     return os.listdir(dir)
 
-
+current_user = User('', '', '', '')
+current_backup = ""
+current_folder_item = Item('', '', '', '', '', '', '', '', '')
 current_path = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
+# current_path = current_folder_item.filePath_Client
 file_list = getlist(current_path)  # 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
+# file_list = fetchFolderInfo.fetch_folder_content(parent_folder, curr_backup)
 
 
 # 这个list里面应该是每一个item都是一个我们定义的文件或文件夹实例
@@ -187,7 +194,8 @@ class logindialog(QDialog):  # This is the class for the login dialog
         self.setFixedSize(self.width(), self.height())
         self.setWindowFlags(Qt.WindowCloseButtonHint)
 
-        ###### 设置界面控件
+        self.signup_dialog = signupdialog(self)
+
         self.frame = QFrame(self)
         self.frame.resize(400, 300)
         self.verticalLayout = QVBoxLayout(self.frame)
@@ -214,8 +222,13 @@ class logindialog(QDialog):  # This is the class for the login dialog
         self.verticalLayout.addWidget(self.lineEdit_password)
 
         self.pushButton_enter = QPushButton()
-        self.pushButton_enter.setText("Sign In")
+        self.pushButton_enter.setText("Login")
         self.verticalLayout.addWidget(self.pushButton_enter)
+
+        self.pushButton_signup = QPushButton()
+        self.pushButton_signup.setText("Sign Up")
+        self.verticalLayout.addWidget(self.pushButton_signup)
+        self.pushButton_signup.clicked.connect(self.signup_show)
 
         self.pushButton_quit = QPushButton()
         self.pushButton_quit.setText("Cancel")
@@ -224,15 +237,120 @@ class logindialog(QDialog):  # This is the class for the login dialog
         self.pushButton_enter.clicked.connect(self.on_pushButton_enter_clicked)
         self.pushButton_quit.clicked.connect(QCoreApplication.instance().quit)
 
+    def signup_show(self):
+        self.close()
+
+        self.signup_dialog.show()
+        self.signup_dialog.exec_()
+
+    # login
     def on_pushButton_enter_clicked(self):
-        # Verify Account
+        global current_user
+        res = current_user.login(self.lineEdit_account.text(), self.lineEdit_password.text())
+        if res[0] == False:
+            return
+        else:
+            current_user = res[1]
+            current_user.print_all()
+            self.accept()
+        return
+
+
+class signupdialog(QDialog):
+    def __init__(self, ui, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setWindowTitle('Sign Up')
+        self.resize(400, 310)
+        self.setFixedSize(self.width(), self.height())
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
+
+        self.ui = ui
+        self.frame = QFrame(self)
+        self.frame.resize(400, 300)
+        self.verticalLayout = QVBoxLayout(self.frame)
+
+        self.label_account = QtWidgets.QLabel()
+        self.label_account.setText("Username")
+        self.label_account.setFixedSize(400, 20)
+        self.verticalLayout.addWidget(self.label_account)
+
+        self.lineEdit_account = QLineEdit()
+        self.lineEdit_account.setFixedSize(370, 30)
+        # self.lineEdit_account.setPlaceholderText("Username")
+        self.verticalLayout.addWidget(self.lineEdit_account)
+
+        # self.lineEdit_account.text()这里可以用这个 函数采集用户输入的username然后用后端函数操作
+
+        self.label_password = QLabel()
+        self.label_password.setText("Password")
+        self.label_password.setFixedSize(400, 20)
+        self.verticalLayout.addWidget(self.label_password)
+
+        self.lineEdit_password = QLineEdit()
+        self.lineEdit_password.setFixedSize(370, 30)
+        self.lineEdit_password.setEchoMode(QtWidgets.QLineEdit.Password)
+        # self.lineEdit_password.setPlaceholderText("Password")
+        self.verticalLayout.addWidget(self.lineEdit_password)
+
+        self.path_show = QLabel()
+        self.path_show.setFixedSize(400, 20)
+        self.verticalLayout.addWidget(self.path_show)
+        self.path_show.setText("Path")
+
+        self.lineEdit_path = QLineEdit()
+        self.lineEdit_path.setFixedSize(370, 30)
+        self.verticalLayout.addWidget(self.lineEdit_path)
+
+        self.pushButton_choose = QPushButton()
+        self.pushButton_choose.setText("Set Path")
+        self.verticalLayout.addWidget(self.pushButton_choose)
+        self.pushButton_choose.clicked.connect(self.setpath)
+
+        self.pushButton_signup = QPushButton()
+        self.pushButton_signup.setText("Sign Up")
+        self.verticalLayout.addWidget(self.pushButton_signup)
+        self.pushButton_signup.clicked.connect(self.login_show)
+
+        self.pushButton_quit = QPushButton()
+        self.pushButton_quit.setText("Cancel")
+        self.verticalLayout.addWidget(self.pushButton_quit)
+
+        # self.pushButton_enter.clicked.connect(self.on_pushButton_enter_clicked)
+        self.pushButton_quit.clicked.connect(QCoreApplication.instance().quit)
+
+    def login_show(self):
+        print(self.lineEdit_account.text())  # 这两行我用的是打印，但是应当是需要加入后端函数的，需要对输入的这个用户名创建文件夹
+        print(self.lineEdit_password.text())
+
         if self.lineEdit_account.text() == "":
             return
         # Verify password
         if self.lineEdit_password.text() == "":
             return
-        # Password Verified
-        self.accept()
+
+        self.close()
+        self.ui.accept()
+
+        # self.ui.show()
+        # self.ui.exec_()
+
+    def setpath(self):
+        # 这个path就是用户选择的path，这里要加上后端对于path处理的函数
+        path = QFileDialog.getExistingDirectory(self, 'Choose Backup Directory', './')
+        global current_user
+        res = current_user.signup(self.lineEdit_account.text(), self.lineEdit_password.text(), path)
+        if res[0] == False:
+            pass
+        else:
+            current_user = res[1]
+            current_user.print_all()
+            pass
+        #这后面应该就没了
+
+        # print(path)
+        # print(type(path))
+        # self.lineEdit_path.setText(path)
+        # return path
 
 
 app = QtWidgets.QApplication(sys.argv)

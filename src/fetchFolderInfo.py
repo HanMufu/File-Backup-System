@@ -1,7 +1,7 @@
 from model import Item, User, Backup, DatabaseController
 
 global curr_user
-curr_user = User("Alice_qwertyu", "Alice", "aldskfj23lkhagd", "/home/dataspace/Alice_qwertyu", "Alice_qwertyu")
+curr_user = User("1", "Alice", "aldskfj23lkhagd", "/home/dataspace/Alice_qwertyu")
 
 fileA = Item("001", "/desktop", "/20191204220814/desktop/readme.txt", "1206", "txt", "readme.txt", "qwertyuiopasdfghjkl", False, True)
 
