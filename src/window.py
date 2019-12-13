@@ -58,6 +58,10 @@ class Ui_RU_Backup(object):
         new.triggered.connect(self.backpath_modify)
         self.tb.addAction(new)
 
+        backup_start = QAction(QIcon("./back.png"),"Start Backup",RU_Backup)
+        backup_start.triggered.connect(self.backup_start)
+        self.tb.addAction(backup_start)
+
         self.dir_label = QLabel(RU_Backup)
         self.dir_label.setGeometry(QtCore.QRect(60, 100, 400, 30))
 
@@ -109,6 +113,10 @@ class Ui_RU_Backup(object):
     def backpath_modify(self, a):
         print("a")
         # 这个地方可以考虑用来作为用户更改备份文件夹路径的方法
+
+    def backup_start(self):
+        #这里加入后端的开始备份的代码
+        print("a")
 
 
 class ItemQWidget(QtWidgets.QWidget):
