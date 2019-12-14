@@ -140,6 +140,8 @@ class Ui_RU_Backup(object):
         # 这里要刷新backup list下拉菜单 // TODO
         global backup_list
         backup_list = current_user.get_backup_list()
+        for i in backup_list:
+            self.cb.addItem(i.backup_time)
 
 
     def selection_change(self):
@@ -186,7 +188,7 @@ class ItemQWidget(QtWidgets.QWidget):
         self.setLayout(self.allQHBoxLayout)
 
     def setName(self):
-        self.name.setText(self.file_class.fileName)
+        self.name.setText(self.file_class.file_name)
 
     def mouseDoubleClickEvent(self, e):  # 双击事件，如果这个item是文件夹且被双击了，
         # 那么就进入这个文件夹里面，重新刷新一下路径表，这里使用的是os.path，但是我们应该要换成写出来的自己的path
