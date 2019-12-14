@@ -15,10 +15,10 @@ from model import User, Item, Backup
 import DAO
 import Scanner, Download_SFTP
 
-# 这三条是windows的一个配置信息，我觉得在mac跑可能不一定需要这三行
-# dirname = os.path.dirname(PySide2.__file__)
-# plugin_path = os.path.join(dirname, 'plugins', 'platforms')
-# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
+# This is the plugin information for using in Windows OS devices
+#dirname = os.path.dirname(PySide2.__file__)
+#plugin_path = os.path.join(dirname, 'plugins', 'platforms')
+#os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 
 
 def getlist(dir):
@@ -30,18 +30,16 @@ def getlist(dir):
 current_user: User = User('', '', '', '')
 current_backup: Backup = ('', '', '')
 current_folder: Item = Item('', '', '', '', '', '', '', '', '')
-# 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
+
+
 # current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"
 current_path = ""
 # current_path = current_folder_item.filePath_Client
-# 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
+
 file_item_list = []
 # file_list = getlist(current_path)
 file_list = []
 backup_list = []
-
-# 这个list里面应该是每一个item都是一个我们定义的文件或文件夹实例
-# 而且这里我是比较省事情就直接用了一个全局变量，所以你可能要import dbclass，然后每次点击那个下拉菜单里面的某一个条目的时候，需要把这个file_list刷新一下
 
 
 class Ui_RU_Backup(object):
@@ -49,7 +47,7 @@ class Ui_RU_Backup(object):
         RU_Backup.setObjectName("RU_Backup")
         RU_Backup.resize(1210, 740)  # 420, 714
         # Doco.setFixedSize(420, 714)#
-        # RU_Backup.setWindowFlags(QtCore.Qt.FramelessWindowHint)#隐藏默认窗口样式
+        # RU_Backup.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
         self.retranslateUi(RU_Backup)
         QtCore.QMetaObject.connectSlotsByName(RU_Backup)
@@ -61,23 +59,16 @@ class Ui_RU_Backup(object):
 
         self.tb = RU_Backup.addToolBar("Login")
 
-        new = QAction(QIcon("./login.png"), "login", RU_Backup)
+        new = QAction(QIcon("./icons/login.png"), "login", RU_Backup)
         new.triggered.connect(self.backpath_modify)
         self.tb.addAction(new)
 
-        backup_start = QAction(QIcon("./back.png"),"Start Backup",RU_Backup)
+        backup_start = QAction(QIcon("./icons/back.png"),"Start Backup",RU_Backup)
         backup_start.triggered.connect(self.backup_start)
         self.tb.addAction(backup_start)
 
         self.dir_label = QLabel(RU_Backup)
-        self.dir_label.setGeometry(QtCore.QRect(60, 100, 400, 30))
-
-        
-        #self.cb.addItem('2019/12/6 17:42')
-        #self.cb.addItem('2019/12/8 20:11')
-        # 这个函数是用来往下拉菜单添加item，每一个item应该都是一个时间戳，格式03/12/2019 17:19:03
-        # 可以写一个for i in listoftimestamp: self.cb.addItem(i)
-        # 然后下面还需要链接到一个clicked事件，比如clicked=Lambda:Refresh
+        self.dir_label.setGeometry(QtCore.QRect(60, 100, 700, 30))
 
         self.pushButton_pre = QtWidgets.QPushButton(RU_Backup, clicked=lambda: Event.Pre(self))
         self.pushButton_pre.setGeometry(QtCore.QRect(0, 100, 50, 30))
@@ -110,7 +101,7 @@ class Ui_RU_Backup(object):
     def music_list(self):
         self.listWidget.clear()  # clear list
         # print(len(file_list))
-        for n in range(0, len(file_item_list)):  # 这个地方就是对于file_list中的每个实例，创建一个小的Item，然后再Item中显示文件或文件夹名
+        for n in range(0, len(file_item_list)):  # Creat Item for each file class in the file_item_list
             # Create QCustomQWidget
             myItemQWidget = ItemQWidget(n, self)
             myItemQWidget.setName()
@@ -126,7 +117,7 @@ class Ui_RU_Backup(object):
 
     def backpath_modify(self, a):
         print("a")
-        # 这个地方可以考虑用来作为用户更改备份文件夹路径的方法
+        # TODO: modify the backpath
 
     def backup_start(self):
         #这里加入后端的开始备份的代码
@@ -156,7 +147,7 @@ class Ui_RU_Backup(object):
         for i in backup_list:
             if i.backup_time == self.cb.currentText():
                 current_backup = i
-                current_path = i.backup_root_path_at_server #我不知道这个serverpath是不是string，你确认下
+                current_path = i.backup_root_path_at_server
         self.music_list()
 
 
@@ -171,19 +162,19 @@ class ItemQWidget(QtWidgets.QWidget):
         self.ui = ui
         self.info_pre = infodialog(self.file_class)
         self.textQHBoxLayout = QtWidgets.QHBoxLayout()
-        self.name = QtWidgets.QLabel()  # 文件或文件夹名
+        self.name = QtWidgets.QLabel()  
         #self.file_path = current_path + file_list[self.n]
         self.type_label = QToolButton()
         if self.file_class.file_type == "Folder":
-            self.type_label.setIcon(QIcon("./dir.png"))
+            self.type_label.setIcon(QIcon("./icons/dir.png"))
         else:
-            self.type_label.setIcon(QIcon("./file.png"))
+            self.type_label.setIcon(QIcon("./icons/file.png"))
         self.play_btn = QtWidgets.QToolButton()
-        self.play_btn.setIcon(QIcon("./download.png"))  # 这里需要一个def download方法，点击之后下载这个文件到本地
+        self.play_btn.setIcon(QIcon("./icons/download.png"))  
         self.play_btn.clicked.connect(self.download)
-        self.info_btn = QtWidgets.QToolButton()  # 这里是显示文件信息的button，然后这个点击一下之后需要显示出来一个新窗口，在底下InfoQWidget
+        self.info_btn = QtWidgets.QToolButton()  
         self.info_btn.clicked.connect(self.info_pre.show)
-        self.info_btn.setIcon(QIcon("./info.png"))
+        self.info_btn.setIcon(QIcon("./icons/info.png"))
         self.textQHBoxLayout.addWidget(self.type_label)
         self.textQHBoxLayout.addWidget(self.name)
         self.textQHBoxLayout.addWidget(self.play_btn)
@@ -195,8 +186,7 @@ class ItemQWidget(QtWidgets.QWidget):
     def setName(self):
         self.name.setText(self.file_class.file_name)
 
-    def mouseDoubleClickEvent(self, e):  # 双击事件，如果这个item是文件夹且被双击了，
-        # 那么就进入这个文件夹里面，重新刷新一下路径表，这里使用的是os.path，但是我们应该要换成写出来的自己的path
+    def mouseDoubleClickEvent(self, e):  # Click two times of the folder and get into it
         global current_path
         global file_list
         global file_item_list
@@ -209,31 +199,39 @@ class ItemQWidget(QtWidgets.QWidget):
         if self.file_class.file_type == "Folder":
             file_item_list = current_user.fetch_folder_content(self.file_class, current_backup)
             file_list = getlist(current_path)
-            self.ui.music_list()  # 刷新路经表
+            self.ui.music_list()  
 
     def download(self):
         print("start download")
-        #download(self.file_class)
-        #这个位置插入吴越的download方法，self.file_class是一个文件类的对象，可以作为参数传入
         Download_SFTP.downloadhelper(self.file_class)
         print('download successful')
 
 
 class Event():
-    def Pre(self):  # 这个方法就是返回上一级菜单，就是那个back按钮
+    def Pre(self):  # This method is used for going back to the parent path
         global current_path
+        global file_item_list
         global file_list
+        global current_backup
+        global current_user
         cache = current_path.split("/")
-        le = len(cache[len(cache) - 2]) + 1
+        le = len(cache[len(cache) - 1]) + 1
         current_path = current_path[:-le]
+        #file_item_list = current_user.fetch_folder_content(self.file_class, current_backup)
+        print(current_path)
+        print(current_backup)
+
+        file_item_list = current_user.fetch_root_folder_content(current_backup, current_path)
+        #for i in file_item_list:
+            #print(i.file_name)
         file_list = getlist(current_path)
         self.dir_label.setText(current_path)
-        self.music_list()  # 刷新路经表
+        self.music_list()  # Refresh the path table
         # print(file_list)
 
 
-class infodialog(QDialog):  # 这个dialog是用来新打开一个窗口显示文件的各种信息的
-    def __init__(self, file_class, *args, **kwargs):  # 这里需要传入一个自己定义的file_list里面的实例file_info
+class infodialog(QDialog):  # This dialog is used for presenting the information of files or folders
+    def __init__(self, file_class, *args, **kwargs): 
         super().__init__(*args, **kwargs)
         self.setWindowTitle('info')
         self.file_class = file_class
@@ -375,8 +373,6 @@ class signupdialog(QDialog):
         # self.lineEdit_account.setPlaceholderText("Username")
         self.verticalLayout.addWidget(self.lineEdit_account)
 
-        # self.lineEdit_account.text()这里可以用这个 函数采集用户输入的username然后用后端函数操作
-
         self.label_password = QLabel()
         self.label_password.setText("Password")
         self.label_password.setFixedSize(400, 20)
@@ -434,7 +430,6 @@ class signupdialog(QDialog):
         # self.ui.exec_()
 
     def setpath(self):
-        # 这个path就是用户选择的path，这里要加上后端对于path处理的函数
         path = QFileDialog.getExistingDirectory(self, 'Choose Backup Directory', './')
 
         # print(path)
