@@ -22,18 +22,23 @@ import Scanner, Download_SFTP
 
 
 def getlist(dir):
-    return os.listdir(dir)
+    res_list = []
+    for i in file_item_list:
+        res_list.append(i.file_name)
+    return res_list
 
 current_user: User = User('', '', '', '')
 current_backup: Backup = ('', '', '')
 current_folder: Item = Item('', '', '', '', '', '', '', '', '')
-current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"  # 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
+# 这里需要修改我用的是当前路径，应该要改成数据库内的虚拟的文件路径
+# current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"
+current_path = ""
 # current_path = current_folder_item.filePath_Client
 # 这里也要修改，我用的是os包自带的getlist方法，获取当前文件夹的每一条文件或文件夹信息，存到file_list这个list里面
 file_item_list = []
-file_list = getlist(current_path)
+# file_list = getlist(current_path)
+file_list = []
 backup_list = []
-
 
 # 这个list里面应该是每一个item都是一个我们定义的文件或文件夹实例
 # 而且这里我是比较省事情就直接用了一个全局变量，所以你可能要import dbclass，然后每次点击那个下拉菜单里面的某一个条目的时候，需要把这个file_list刷新一下
@@ -169,7 +174,7 @@ class ItemQWidget(QtWidgets.QWidget):
         self.name = QtWidgets.QLabel()  # 文件或文件夹名
         #self.file_path = current_path + file_list[self.n]
         self.type_label = QToolButton()
-        if self.file_class.file_type == "folder":
+        if self.file_class.file_type == "Folder":
             self.type_label.setIcon(QIcon("./dir.png"))
         else:
             self.type_label.setIcon(QIcon("./file.png"))
@@ -198,10 +203,10 @@ class ItemQWidget(QtWidgets.QWidget):
         global current_backup
         global current_backup
         # print("clicked"+self.name.text())
-        current_path = current_path + self.name.text() + "/"
+        current_path = current_path + '/' + self.name.text()
         self.ui.dir_label.setText(current_path)
         
-        if self.file_class.file_type == "folder":
+        if self.file_class.file_type == "Folder":
             file_item_list = current_user.fetch_folder_content(self.file_class, current_backup)
             file_list = getlist(current_path)
             self.ui.music_list()  # 刷新路经表
