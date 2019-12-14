@@ -31,6 +31,7 @@ current_user: User = User('', '', '', '')
 current_backup: Backup = ('', '', '')
 current_folder: Item = Item('', '', '', '', '', '', '', '', '')
 
+
 # current_path: str = "/Users/hanmufu/Downloads/RUBackup_test_folder"
 current_path = ""
 # current_path = current_folder_item.filePath_Client
@@ -39,6 +40,7 @@ file_item_list = []
 # file_list = getlist(current_path)
 file_list = []
 backup_list = []
+
 
 class Ui_RU_Backup(object):
     def setupUi(self, RU_Backup):

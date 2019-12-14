@@ -1,6 +1,6 @@
 # RUBackup
 
-This is the course project of Rutgers CS552 Computer Networks. Our project, RU_Backup implemented a Could-based file backup system.
+This is the course project of Rutgers CS552 Computer Networks. Our project, RU_Backup implemented a online file backup system.
 
 ## Dependencies
 

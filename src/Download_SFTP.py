@@ -5,33 +5,35 @@ import paramiko
 import os
 import sys
 from stat import S_ISDIR as isdir
+# import model
+# from model import *
 
 
-class Item:
-    ID = None
-    filePath_Client = None
-    filePath_Server = None
-    fileSize = None
-    fileType = None
-    fileName = None
-    MD5 = None
-    isExist_LastB = None
-    isBp_complete = None
-
-    def __init__(self, ID, filePath_Client, filePath_Server, fileSize, fileType, fileName, MD5, isExist_LastB,
-                 isBp_complete):
-        self.ID = ID
-        self.filePath_Client = filePath_Client
-        self.filePath_Server = filePath_Server
-        self.fileSize = fileSize
-        self.fileType = fileType
-        self.fileName = fileName
-        self.MD5 = MD5
-        self.isExist_LastB = isExist_LastB
-        self.isBp_complete = isBp_complete
-
-    def print(obj):
-        print(obj.__dict__)
+# class Item:
+#     ID = None
+#     file_path_at_client = None
+#     file_path_at_server = None
+#     fileSize = None
+#     fileType = None
+#     fileName = None
+#     MD5 = None
+#     isExist_LastB = None
+#     isBp_complete = None
+#
+#     def __init__(self, ID, file_path_at_client, file_path_at_server, fileSize, fileType, fileName, MD5, isExist_LastB,
+#                  isBp_complete):
+#         self.ID = ID
+#         self.file_path_at_client = file_path_at_client
+#         self.file_path_at_server = file_path_at_server
+#         self.fileSize = fileSize
+#         self.fileType = fileType
+#         self.fileName = fileName
+#         self.MD5 = MD5
+#         self.isExist_LastB = isExist_LastB
+#         self.isBp_complete = isBp_complete
+#
+#     def print(obj):
+#         print(obj.__dict__)
 
 
 def check_local_dir(local_dir_name):
@@ -60,7 +62,7 @@ def down_from_remote(sftp_obj, remote_dir_path, local_dir_path, filename_at_clie
         print('start downloading the folder：' + remote_dir_path)
         #file_list = fetch_folder_name(parent_folder)
         #for i in file_list
-            #download_from_remote(sftp_obj, i.filePath_Server, i.filePath_Client, i.fileName)
+            #download_from_remote(sftp_obj, i.file_path_at_server, i.file_path_at_client, i.fileName)
         for remote_file_name in sftp_obj.listdir(remote_dir_path):
             sub_remote = os.path.join(remote_dir_path, remote_file_name)
             sub_remote = sub_remote.replace('\\', '/')
@@ -101,8 +103,8 @@ def downloadhelper(Item):
 
     # download the remote file
     # print(sftp.stat(remote_dir))
-    # down_from_remote(sftp, Item.filePath_Server, os.path.split(Item.filePath_Client)[0], Item.fileName)
-    down_from_remote(sftp, Item.filePath_Server, Item.filePath_Client, Item.fileName)
+    # down_from_remote(sftp, Item.file_path_at_server, os.path.split(Item.file_path_at_client)[0], Item.fileName)
+    down_from_remote(sftp, Item.file_path_at_server, Item.file_path_at_client, Item.file_name)
 
     """close the connection"""
     t.close()

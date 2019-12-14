@@ -131,7 +131,6 @@ class User:
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db="RUBackup", port=3306)
         cursor = connection.cursor()
         sql = "select * from user_backup_history where user_id = " + str(self.user_id)
-        print(sql)
         try:
             cursor.execute(sql)
             results = cursor.fetchall()
@@ -172,9 +171,8 @@ class User:
         connection = pymysql.connect(host='35.223.248.16', user='root', passwd='CAMRYLOVESEDGE', db=self.user_name, port=3306)
         cursor = connection.cursor()
         # select * from curr_backup.backupDBTableName where filePath_Client = parent_folder.filePath_Client + parent_folder.fileName
-        parent_folder_path = "'" + parent_folder.file_path_at_client + parent_folder.file_name + "/'"
-        backup_table_name_for_sql = "'" + curr_backup.backup_time + "'"
-        sql = "select * from %s where filePath_Client = %s" % (backup_table_name_for_sql, parent_folder_path)
+        parent_folder_path = "'" + parent_folder.file_path_at_client + "/" + parent_folder.file_name + "'"
+        sql = "select * from %s.%s where filePath_Client = %s" % (self.user_name, curr_backup.backup_time, parent_folder_path)
         res_file_list = []
         try:
             cursor.execute(sql)
@@ -187,7 +185,7 @@ class User:
             print("fetch folder content successful, len of content is " + str(len(res_file_list)))
         except:
             print("Error: unable to fetch data in fetch_folder_content")
-            connection.disconnect()
+            connection.close()
         return res_file_list
 
     # def get_folder_info(self, folder_path: str, curr_backup: Backup):
@@ -215,8 +213,7 @@ class User:
         cursor = connection.cursor()
         # select * from curr_backup.backupDBTableName where filePath_Client = parent_folder.filePath_Client + parent_folder.fileName
         parent_folder_path = "'" + file_path + "'"
-        backup_table_name_for_sql = "'" + curr_backup.backup_time + "'"
-        sql = "select * from %s where filePath_Client = %s" % (backup_table_name_for_sql, parent_folder_path)
+        sql = "select * from %s.%s where filePath_Client = %s" % (self.user_name, curr_backup.backup_time, parent_folder_path)
         res_file_list = []
         print(sql)
         try:
