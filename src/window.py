@@ -14,6 +14,7 @@ import model
 from model import User, Item, Backup
 import DAO
 import Scanner, Download_SFTP
+import os
 
 # This is the plugin information for using in Windows OS devices
 #dirname = os.path.dirname(PySide2.__file__)
@@ -423,6 +424,11 @@ class signupdialog(QDialog):
             current_user = res[1]
             current_user.print_all()
             current_user.create_folder_on_server()
+            # if 'version' existed in current directory, delete it
+            dir_content = os.listdir()
+            for i in dir_content:
+                if i == 'version':
+                    os.remove(i)
             self.close()
             self.ui.accept()
 
