@@ -13,7 +13,7 @@ import qdarkstyle
 import model
 from model import User, Item, Backup
 import DAO
-import Scanner
+import Scanner, Download_SFTP
 
 # 这三条是windows的一个配置信息，我觉得在mac跑可能不一定需要这三行
 # dirname = os.path.dirname(PySide2.__file__)
@@ -207,9 +207,11 @@ class ItemQWidget(QtWidgets.QWidget):
             self.ui.music_list()  # 刷新路经表
 
     def download(self):
-        print("download")
+        print("start download")
         #download(self.file_class)
         #这个位置插入吴越的download方法，self.file_class是一个文件类的对象，可以作为参数传入
+        Download_SFTP.downloadhelper(self.file_class)
+        print('download successful')
 
 
 class Event():
