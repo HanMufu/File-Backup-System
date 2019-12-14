@@ -140,6 +140,8 @@ class Ui_RU_Backup(object):
         # 这里要刷新backup list下拉菜单 // TODO
         global backup_list
         backup_list = current_user.get_backup_list()
+        for i in backup_list:
+            self.cb.addItem(i.backup_time)
 
 
     def selection_change(self):
