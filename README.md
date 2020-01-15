@@ -1,6 +1,6 @@
 # RUBackup
 
-This is the course project of Rutgers CS552 Computer Networks. Our project, RU_Backup implemented a online file backup system.
+This is the course project of Rutgers CS552 Computer Networks. Our project, RU_Backup implemented an online file backup system.
 
 ## Dependencies
 
@@ -18,7 +18,7 @@ First, install all the dependencies in  `./src/requirements.txt`
 	$ cd src
 	$ pip install requirements.txt
 
-Then, just execute the UI file
+Then execute the UI file
 	
 	$ python window.py
 
